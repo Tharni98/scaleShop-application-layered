@@ -1,0 +1,140 @@
+DROP DATABASE scaleShop;
+CREATE DATABASE scaleShop;
+
+USE scaleShop;
+
+CREATE TABLE User(
+	jobRole VARCHAR(30) ,
+	username VARCHAR(30),
+	password VARCHAR(30),
+	CONSTRAINT PRIMARY KEY (jobRole)
+);
+
+CREATE TABLE Employee(
+	employeeID VARCHAR(6),
+	name VARCHAR(30),
+	address VARCHAR(30),
+	salary DECIMAL(10,2),
+	jobRole VARCHAR(30) ,
+	CONSTRAINT PRIMARY KEY (employeeID),
+	CONSTRAINT FOREIGN KEY(jobRole) REFERENCES User(jobRole) on Delete Cascade on Update Cascade
+);
+
+CREATE TABLE Customer(
+	customerID VARCHAR(10) ,
+	name VARCHAR(30),
+	address VARCHAR(30),
+	contactNo INT(10),
+	employeeID VARCHAR(6),
+	CONSTRAINT PRIMARY KEY(customerID),
+	CONSTRAINT FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) on Delete Cascade on Update Cascade
+);
+
+CREATE TABLE Orders(
+	date DATETIME,
+	orderID VARCHAR(10) ,
+	customerID VARCHAR(10),
+	CONSTRAINT PRIMARY KEY(orderID),
+	CONSTRAINT FOREIGN KEY(customerID) REFERENCES Customer(customerID) on Delete Cascade on Update Cascade
+);
+
+CREATE TABLE Service(
+	serviceID VARCHAR(10) ,
+	description VARCHAR(30),
+	date DATETIME,
+	CONSTRAINT PRIMARY KEY(serviceID)
+);
+
+CREATE TABLE ServiceDetail(
+	customerID VARCHAR(10) ,
+	serviceID VARCHAR(10) ,
+	description VARCHAR(30),
+	price DECIMAL(10,2),
+	CONSTRAINT PRIMARY KEY (customerID,serviceID),
+	CONSTRAINT FOREIGN KEY (customerID) REFERENCES Customer(customerID) on Delete Cascade on Update Cascade,
+	CONSTRAINT FOREIGN KEY (serviceID) REFERENCES Service(serviceID) on Delete Cascade on Update Cascade
+);
+
+CREATE TABLE Product(
+	code VARCHAR(10) ,
+	type VARCHAR(30),
+	description VARCHAR(30),
+	unitPrice DECIMAL(10,2),
+	QuntityOnHand INT(10),
+	CONSTRAINT PRIMARY KEY(code)
+);
+
+CREATE TABLE orderDetail(
+	code VARCHAR(10) ,
+	orderID VARCHAR(10) ,
+	Quantity INT(10),
+	Price DECIMAL(10,2),
+	totalPrice DECIMAL(8,2),
+	CONSTRAINT PRIMARY KEY (orderID,code),
+	CONSTRAINT FOREIGN KEY (orderID) REFERENCES Orders(orderID) on Delete Cascade on Update Cascade,
+	CONSTRAINT FOREIGN KEY (code) REFERENCES Product(code) on Delete Cascade on Update Cascade
+);
+
+CREATE TABLE Supplier(
+	supplierID VARCHAR(10) ,
+	name VARCHAR(30),
+	contactNo INT(10),
+	type VARCHAR(30),
+	Quntity INT(10),
+	CONSTRAINT PRIMARY KEY (supplierID)
+);
+
+CREATE TABLE supplyDetail(
+	code VARCHAR(10) ,
+	supplierID VARCHAR(10) ,
+	Quantity INT(10),
+	CONSTRAINT PRIMARY KEY (code,supplierID),
+	CONSTRAINT FOREIGN KEY (code) REFERENCES Product(code) on Delete Cascade on Update Cascade,
+	CONSTRAINT FOREIGN KEY (supplierID) REFERENCES Supplier(supplierID) on Delete Cascade on Update Cascade
+);
+
+CREATE TABLE Payment(
+	payID VARCHAR(10),
+	description VARCHAR(30),
+	price DECIMAL(10,2),
+	supplierID VARCHAR(10),
+	CONSTRAINT PRIMARY KEY (payID),
+	CONSTRAINT FOREIGN KEY (supplierID) REFERENCES Supplier(supplierID ) on Delete Cascade on Update Cascade
+);
+
+
+INSERT INTO customer VALUES('C001', 'Tharani', 'Kahawa', 075462455, 'E001');
+INSERT INTO customer VALUES('C002', 'Nethu', 'Ambalangoda', 0785612345, 'E002'); 
+
+INSERT INTO employee VALUES('E001', 'Rishika', 'Kahawa', 40000.00, 'Manager');   
+INSERT INTO employee VALUES('E002', 'Kasun', 'Ambalangoda', 50000.00, 'Admin');
+
+INSERT INTO orderdetail VALUES('P001', 'O001', 2, 20000.00, 40000.00);
+INSERT INTO orderdetail VALUES('P002', 'O002', 3, 10000.00, 30000.00);  
+
+INSERT INTO orders VALUES( '2023-01-02','O001', 'C001');
+INSERT INTO orders VALUES('2023-01-10','O002',  'C002');	
+
+INSERT INTO payment VALUES( 'pay-01','Normal', 40000.00,'SUP-01'); 
+INSERT INTO payment VALUES('pay-02','HAvy',50000.00 , 'SUP-02');
+
+INSERT INTO product VALUES( 'P001','Normal', '2kg',20000.00,20);
+INSERT INTO product VALUES('P002','HAvy','5kg' , 10000.00,50);  
+
+INSERT INTO service VALUES( 'S001','Repire', '2023-01-02');
+INSERT INTO service VALUES('S002','Repire','2023-01-05');  
+
+INSERT INTO servicedetail VALUES( 'C001','S002', 'Repire',20000.00);
+INSERT INTO servicedetail VALUES('C002','S001','Repire',10000.00);
+
+INSERT INTO  supplier VALUES( 'SUP-01','Oni', 07654982,'Normal',22);
+INSERT INTO  supplier VALUES('SUP-02','Ama',07765632,'HAvy',53);  
+
+INSERT INTO  supplydetail VALUES( 'P001','SUP-01',22);
+INSERT INTO  supplydetail VALUES('P001','SUP-02',53);  
+
+INSERT INTO  user VALUES( 'Admin','Admin',1234);		
+INSERT INTO  user VALUES('Manager','Manager',5678);
+
+
+
